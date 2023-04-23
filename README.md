@@ -61,7 +61,7 @@ You can also try it through Swagger at this link: http://localhost/docs. First, 
     1. Run `docker-compose up -d` to start the Grafana service.
     2. Access the Grafana UI by going to http://localhost:3000 in your web browser.
     3. Choose a password for your Grafana admin user.
-    4. Once you're logged in, you'll be taken to the home page where you can see the Dashboard section. There are three sample dashboards provided: Cadvisor exporter, Prometheus 2.0 Overview, and NGINX exporter.
+    4. After logging in, you will be directed to the home page where you can access the Dashboard section. There are three sample dashboards available, including Cadvisor Exporter, Prometheus 2.0 Overview, and NGINX Exporter. If you can't find them, they should be located under the General segment.
     5. Use these dashboards to monitor your application's performance metrics.
 
 Note: If you want to use your own dashboard, you can create one in Grafana and then export it as a JSON file. You can then copy the JSON file to the grafana/dashboards directory in the project and update the grafana/provisioning/dashboards.yml file to include your dashboard configuration. When you start the Grafana service with docker-compose up -d, your dashboard will be automatically provisioned in Grafana.
