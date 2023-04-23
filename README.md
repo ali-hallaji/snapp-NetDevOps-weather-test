@@ -10,8 +10,8 @@ To start the project, follow these steps:
 2. Clone this repository to your server.
 3. Change to the project directory by running `cd snapp-NetDevOps-weather-test`.
 4. Copy the `env-example` file to `.env` by running `cp env-example .env`.
-5. Edit the .env file and update the variables with your own values, such as the OpenWeatherMap API key.
-6. Build the Docker images: docker-compose build
+5. Please edit the `.env` file and replace the variables with your own values. You may need to update the OpenWeatherMap API key. (Note that for testing purposes, an API key has already been provided and you may not need to make any changes.).
+6. Build the Docker images: `docker-compose build`
 7. Start the containers in the background: `docker-compose up -d`.
 8. The API should now be accessible at http://localhost/docs    # It's swagger and you'll be able to try it.
 
