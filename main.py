@@ -28,8 +28,15 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
 async def get_weather(city: str, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     url = f"{settings.WEATHER_API_URL}?q={city}&appid={settings.WEATHER_API_KEY}"
     async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        response.raise_for_status()
+        try:
+            response = await client.get(url)
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 404:
+                return {"detail": f"City '{city}' not found."}
+            else:
+                raise HTTPException(status_code=404, detail=e) from e
+
         data = response.json()
 
     weather = {
@@ -51,8 +58,18 @@ async def get_weather(city: str, db: Session = Depends(get_db), current_user: Us
 
 
 @app.get("/v1/weather/history")
-async def get_weather_history(offset: int=0, limit: int=10, db: Session=Depends(get_db), current_user: User=Depends(get_current_user)):
+async def get_weather_history(
+    offset: int=0,
+    limit: int=10,
+    db: Session=Depends(get_db), 
+    current_user: User=Depends(get_current_user)
+    ):
     if weather_data := db.query(Weather).offset(offset).limit(limit).all():
-        return [{"city": weather.city, "temperature": weather.temperature, "humidity": weather.humidity, "time": weather.time} for weather in weather_data]
+        return [
+            {
+                "city": weather.city, "temperature": weather.temperature,
+                "humidity": weather.humidity, "time": weather.time
+            } for weather in weather_data
+        ]
     else:
         raise HTTPException(status_code=404, detail="No weather data found")

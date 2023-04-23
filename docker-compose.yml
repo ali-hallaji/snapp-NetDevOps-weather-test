@@ -38,10 +38,64 @@ services:
 
   nginx:
     image: nginx
+    depends_on:
+      - app
     ports:
       - "80:80"
     volumes:
       - ./nginx_conf:/etc/nginx/conf.d/:ro
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    depends_on:
+      - nginx
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - ./cadvisor_storage:/var/lib/cadvisor
+    privileged: true
+    command: ["/usr/bin/cadvisor", "--allow_dynamic_housekeeping=false", "--storage_duration=5m", "--housekeeping_interval=30s", "--cgroup_root=/sys/fs/cgroup"]
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter
+    container_name: 'nginx_exporter'
+    command:
+    - '-nginx.scrape-uri=http://nginx/metrics'
+    ports:
+    - '9113:9113'
+
+  grafana:
+    build:
+      context: .
+      dockerfile: Dockerfile.grafana
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/datasources/all.yml:/etc/grafana/provisioning/datasources/all.yml
+      - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/all.yml
+
 volumes:
   postgres_data:
+  grafana-storage:

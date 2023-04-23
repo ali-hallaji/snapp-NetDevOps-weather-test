@@ -1,0 +1,5 @@
+FROM grafana/grafana:latest
+
+RUN mkdir -p /var/lib/grafana/dashboards
+
+COPY ./grafana/provisioning /etc/grafana/provisioning

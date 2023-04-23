@@ -1,0 +1,15 @@
+# DB credentials
+POSTGRES_HOST = 'db'
+POSTGRES_USER = 'user'
+POSTGRES_PASS = 'password'
+POSTGRES_DB = 'snapp'
+
+# Weather credentials
+WEATHER_API_KEY = 'c0446967f0affbc4e7c916a51088c4e6'
+WEATHER_API_URL = "https://api.openweathermap.org/data/2.5/weather"
+
+# Server credentials
+ROOT_USER = 'root'
+ROOT_PASS = '12345678'
+SECRET_KEY = 'this-is-a-secret-key'
+ALGORITHM = 'HS256'
