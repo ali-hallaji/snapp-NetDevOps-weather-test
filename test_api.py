@@ -2,9 +2,19 @@ from fastapi.testclient import TestClient
 
 from main import app
 
+from config import settings
+
 
 client = TestClient(app)
-token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJyb290IiwiZXhwIjoxNjgyMDg0NDkyfQ.WU_IauAKctcJXyqOibyBAzZq5R0EH6WwdyZVRT5rT2k"
+token = ""
+
+
+def test_login():
+    global token
+    response = client.post("/auth/login", data={"username": settings.ROOT_USER, "password": settings.ROOT_PASS})
+    assert response.status_code == 200
+    assert "access_token" in response.json()
+    token = f"Bearer {response.json()['access_token']}"
 
 
 def test_get_weather():
